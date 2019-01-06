@@ -23,6 +23,22 @@ if (function_exists($_GET['f'])) {
 }
 
 function addUser($user_id, $public_key) {
+
+    // verify that request is coming from valid source
+    $signatue = $_GET['signature'];
+    $encrypted = $_GET['encrypted'];
+
+    $rsa = new Crypt_RSA();
+    $verified = $rsa->verify($encrypted, $signatue);
+
+    if ($verified) {
+        // it's fine
+    } else {
+        // invalid signature
+        echo "invalid signature";
+        return;
+    }
+
     if (!testUser($user_id)) {
         $sql = "INSERT INTO users (user_id, public_key) VALUES (\"$user_id\", \"$public_key\")";
         runSQL($sql);
