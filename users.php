@@ -4,6 +4,7 @@ ini_set('display_errors',1);
 error_reporting(E_ALL);
 
 include("userssql.php");
+include("crypto/Crypt/RSA.php");
 
 // get info
 if (function_exists($_GET['f'])) {
@@ -26,7 +27,7 @@ function addUser($user_id, $public_key) {
 
     // verify that request is coming from valid source
     $signatue = $_GET['signature'];
-    $encrypted = $_GET['encrypted'];
+    $encrypted = $_GET['data'];
 
     $rsa = new Crypt_RSA();
     $verified = $rsa->verify($encrypted, $signatue);

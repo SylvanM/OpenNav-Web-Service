@@ -1,7 +1,7 @@
 <?php
 
 // get json contents
-$jsonStr    = file_get_contents("/configuration/userdb_login.json");
+$jsonStr    = file_get_contents("../configuration/userdb_login.json");
 $login      = json_decode($jsonStr, true);
 
 $Uservername = strval($login['servername']);

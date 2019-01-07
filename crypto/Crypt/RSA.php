@@ -1,5 +1,7 @@
 <?php
 
+include("../Math/BigInteger.php");
+
 /**
  * Pure-PHP PKCS#1 (v2.1) compliant implementation of RSA.
  *
@@ -495,7 +497,7 @@ class Crypt_RSA
     function __construct()
     {
         if (!class_exists('Math_BigInteger')) {
-            include_once '../../public_html/crypto/Math/BigInteger.php';
+            include("../Math/BigInteger.php");
         }
 
         $this->configFile = CRYPT_RSA_OPENSSL_CONFIG;
