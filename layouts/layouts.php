@@ -1,11 +1,9 @@
 <?php
-
 ini_set('display_errors', 1); 
 error_reporting(E_ALL);
 
-include("../crypto/crypto.php");
-include("../users.php");
-include("layoutssql.php");
+include_once("layoutssql.php");
+include_once("../crypto/crypto.php");
 
 // get json contents
 $jsonStr  = file_get_contents("../../configuration/layoutdb_login.json");
@@ -85,25 +83,26 @@ function getinfo($code) {
 }
 
 function getcrypto($code) {
-    $user_id = $_GET['id'];
+    include_once("../users.php");
+    $userLoginDir = ("../../configuration/userdb_login.json");
 
+    $user_id = $_GET['id'];
     // get plaintext
     $sql = "SELECT encryption from layouts WHERE code=\"$code\"";
     $cipherText = getLayoutSQLResult($sql, "encryption");
     $plaintext  = $cipherText; //decrypt("{$cipherText}", $GLOBALS['decryptionKey']);
     
     // get user key
-    $key = getUserKey($user_id);
+    $key = getUserKey($user_id, $userLoginDir);
 
     $servername = $GLOBALS['servername'];
     $username   = $GLOBALS['username'];
     $password   = $GLOBALS['password'];
     $database   = $GLOBALS['database'];
 
-    $conn=mysqli_connect("$servername","$username","$password","$database");
+    $conn = new mysqli("$servername","$username","$password","$database");
 
     $escaped = mysqli_real_escape_string($conn, $plaintext);
-
     $cipherText = encrypt($plaintext, $key);
 
     echo $cipherText;

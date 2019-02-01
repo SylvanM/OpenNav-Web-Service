@@ -3,8 +3,8 @@
 ini_set('display_errors',1); 
 error_reporting(E_ALL);
 
-include("userssql.php");
-include("crypto/Crypt/RSA.php");
+include_once("userssql.php");
+include_once("crypto/Crypt/RSA.php");
 
 // get info
 if (function_exists($_GET['f'])) {
@@ -32,6 +32,7 @@ function addUser($user_id, $public_key) {
     $rsa = new Crypt_RSA();
     $verified = $rsa->verify($encrypted, $signatue);
 
+    /*
     if ($verified) {
         // it's fine
     } else {
@@ -39,10 +40,13 @@ function addUser($user_id, $public_key) {
         echo "invalid signature";
         return;
     }
+    */
 
-    if (!testUser($user_id)) {
+    // we're gonna ignore signatures for now :)
+    $database_login = "/storage/ssd2/452/6882452/configuration/userdb_login.json";
+    if (!testUser($user_id, $database_login)) {
         $sql = "INSERT INTO users (user_id, public_key) VALUES (\"$user_id\", \"$public_key\")";
-        runSQL($sql);
+        runSQL($sql, $database_login);
         echo $sql;
     } else {
         // user already exists
@@ -51,12 +55,12 @@ function addUser($user_id, $public_key) {
 
 function updateUser($user, $public_key) {
     $sql = "UPDATE users SET public_key = \"$public_key\" WHERE user_id = \"$user\"";
-    runSQL($sql);
+    runSQL($sql, "/storage/ssd2/452/6882452/configuration/userdb_login.json");
 }
 
 // if user exists, return 1, else, return 0
-function testUser($user) {
-    $userExists = testUserExistance($user);
+function testUser($user, $database_login) {
+    $userExists = testUserExistance($user, $database_login);
 
     switch ($userExists) {
         case true:
@@ -68,10 +72,10 @@ function testUser($user) {
     }
 }
 
-function getUserKey($user_id) {
+function getUserKey($user_id, $DBlogin) {
     $sql = "SELECT public_key FROM users WHERE user_id=\"$user_id\"";
 
-    return getSQLResult($sql, "public_key");
+    return getSQLResult($sql, "public_key", $DBlogin);
 }
 
 ?>

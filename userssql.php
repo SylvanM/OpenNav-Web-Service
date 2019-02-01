@@ -1,21 +1,18 @@
 <?php
 
-// get json contents
-$jsonStr    = file_get_contents("../configuration/userdb_login.json");
-$login      = json_decode($jsonStr, true);
-
-$Uservername = strval($login['servername']);
-$Uusername   = strval($login['username']);
-$Upassword   = strval($login['password']);
-$Udatabase   = strval($login['database']);
-
 // run the SQL command
-function runSQL($sql) {
+function runSQL($sql, $DBlogin) {
+
+    // get json contents
+    $jsonStr    = file_get_contents($DBlogin);
+    $login      = json_decode($jsonStr, true);
+
+    $servername = strval($login['servername']);
+    $username   = strval($login['username']);
+    $password   = strval($login['password']);
+    $database   = strval($login['database']);
+
     try {
-        $servername = $GLOBALS['Uservername'];
-        $username   = $GLOBALS['Uusername'];
-        $password   = $GLOBALS['Upassword'];
-        $database   = $GLOBALS['Udatabase'];
         $conn = new PDO("mysql:host=$servername;dbname=$database", $username, $password);
         // set the PDO error mode to exception
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -26,12 +23,14 @@ function runSQL($sql) {
     }
 }
 
-function getSQLResult($sql, $request) {
-    // Create connection
-    $servername = $GLOBALS['Uservername'];
-    $username   = $GLOBALS['Uusername'];
-    $password   = $GLOBALS['Upassword'];
-    $database   = $GLOBALS['Udatabase'];
+function getSQLResult($sql, $request, $DBlogin) {
+    $jsonStr    = file_get_contents($DBlogin);
+    $login      = json_decode($jsonStr, true);
+
+    $servername = strval($login['servername']);
+    $username   = strval($login['username']);
+    $password   = strval($login['password']);
+    $database   = strval($login['database']);
     $conn = new mysqli($servername, $username, $password, $database);
     // Check connection
     if ($conn->connect_error) {
@@ -51,13 +50,18 @@ function getSQLResult($sql, $request) {
     $conn->close();
 }
 
-function testUserExistance($user) {
-    $sql = "SELECT user_id from users WHERE user_id=\"$user\"";
+function testUserExistance($user, $DBlogin) {
 
-    $servername = $GLOBALS['Uservername'];
-    $username   = $GLOBALS['Uusername'];
-    $password   = $GLOBALS['Upassword'];
-    $database   = $GLOBALS['Udatabase'];
+    // get json contents
+    $jsonStr    = file_get_contents($DBlogin);
+    $login      = json_decode($jsonStr, true);
+
+    $servername = strval($login['servername']);
+    $username   = strval($login['username']);
+    $password   = strval($login['password']);
+    $database   = strval($login['database']);
+
+    $sql = "SELECT user_id from users WHERE user_id=\"$user\"";
 
     $mysqli = new mysqli($servername, $username, $password, $database);
     $result = $mysqli->query("SELECT user_id FROM users WHERE user_id = '$user'");
