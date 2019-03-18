@@ -36,6 +36,15 @@ function testCode($code) {
     }
 }
 
+function removeLayout($code) {
+    if (!testCode($code) == false) {
+        return
+    }
+
+    $sql = "DELETE from layouts where code = \"$code\"";
+    runLayoutSQL($sql);
+}
+
 function addImagePart($code) {
     echo "Adding image part";
 
