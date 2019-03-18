@@ -42,6 +42,8 @@ function removeLayout($code) {
     }
 
     $sql = "DELETE from layouts where code = \"$code\"";
+
+    echo $sql;
     runLayoutSQL($sql);
 }
 
