@@ -38,7 +38,7 @@ function testCode($code) {
 
 function removeLayout($code) {
     if (!testCode($code) == false) {
-        return
+        return;
     }
 
     $sql = "DELETE from layouts where code = \"$code\"";
