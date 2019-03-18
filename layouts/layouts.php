@@ -29,8 +29,10 @@ function testCode($code) {
     $codeExists = testCodeExistance($code);
     if ($codeExists) {
         echo "1";
+        return true;
     } else {
         echo "0";
+        return false;
     }
 }
 
@@ -111,6 +113,11 @@ function getcrypto($code) {
 // adding stuff
 
 function addcode($code) {
+    if (testCode($code)) {
+        // no need to make a duplicate of the code!
+        return;
+    }
+
     $sql = "INSERT INTO layouts (code) VALUES (\"$code\")";
 
     $servername = $GLOBALS['servername'];
