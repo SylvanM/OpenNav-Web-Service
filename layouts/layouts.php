@@ -25,6 +25,13 @@ if (function_exists($_GET['f'])) {
     $_GET['f']($_GET['code']);
 }
 
+function streamImageJson($code) {
+    $images = $_POST["images"];
+    $sql = "UPDATE layouts SET images = \"$images\" WHERE code = \"$encodedCryptocode\"";
+    echo $sql . "\n\n";
+    runLayoutSQL($sql);
+}
+
 function testCode($code) {
     $codeExists = testCodeExistance($code);
     if ($codeExists) {
