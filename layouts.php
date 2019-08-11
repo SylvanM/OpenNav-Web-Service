@@ -1,16 +1,18 @@
 <?php
 
-ini_set('display_errors', 1); 
-error_reporting(E_ALL);
-
-//include_once "editors.php";
+require_once("editors.php");
+require_once("sql.php");
 
 chdir("../layouts");
 
 $f = $_GET["f"];
 $c = $_GET["c"];
+
+$pass = isset($_GET['pass']) ? $_GET['pass'] : "";
+$usr =  isset($_GET['u'])    ? $_GET['u']    : "";
+
 if ($f == "u") {
-    upload($c);
+    upload($c, $usr, $pass);
 } else if ($f == "d") {
     $p = $_GET["p"];
     download($c, $p);
@@ -24,23 +26,30 @@ function codeExists($code) {
 }
 
 // TESTING Layouts
-
 function test($code) {
     if (codeExists($code)) {
         echo "1";
+        return true;
     } else {
         echo "0";
+        return false;
     }
 }
 
 // ADDING Layouts
+function upload($code, $user, $pass) {
 
-function upload($code) {
+    // first, verify that the user is logged in
+    if (!verify($user, $pass)) {
+        die("Incorrect Login");
+    }
 
-    // first, verify the user
-    //if (!verify($usr, $hsh)) {
-    //    die("Invalid user");
-    //}
+    // next, verify that the user exists
+    if (!verifyOwnership($user, $code)) {
+        die("Code does not belong to user");
+    }
+
+    // now make sure that the code belongs to the user
 
     $dir = $code;
 
@@ -95,22 +104,21 @@ function download($code, $part) {
      */
 
     switch ($part) {
-        case "l":
+        case "layout":
             $url .= "/layout";
             break;
-        case "r":
+        case "rooms":
             $url .= "/rooms";
             break;
-        case "e":
+        case "info":
             $url .= "/info";
             break;
-        case "i":
+        case "images":
             $url .= "/images";
             break;
     }
 
     readfile($url);
-
 }
 
 ?>
